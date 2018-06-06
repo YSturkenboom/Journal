@@ -8,9 +8,7 @@ import android.util.Log;
 
 import java.util.Map;
 
-/**
- *
- */
+/** SQLiteDatabase that stores Journal entries */
 
 public class EntryDatabase extends android.database.sqlite.SQLiteOpenHelper{
 
@@ -30,13 +28,15 @@ public class EntryDatabase extends android.database.sqlite.SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+
+        // Firstly, create the table
         final String prepared =
-                "create table Entries (_id integer primary key autoincrement not null , title varchar(255), content varchar(255), mood varchar(255), " +
+                "create table Entries (_id integer primary key autoincrement not null , " +
+                        "title varchar(255), content varchar(255), mood varchar(255), " +
                         "timestamp datetime);";
         sqLiteDatabase.execSQL(prepared);
 
         // Example entries
-
         final String example =
                 "insert into Entries values (0, 'First day at work', 'The people were really nice" +
                         "next time Ill bring my own coffee', 'excited', '2018-04-29 17:01:59')";
@@ -52,6 +52,9 @@ public class EntryDatabase extends android.database.sqlite.SQLiteOpenHelper{
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+
+        // When the app is updated the table is currently dropped and then recreated.
+        // A real app would have to use migrations or you would keep losing your data.
         final String drop = "drop table Entries;";
         final String prepared =
                 "create table Entries (_id int primary key autoincrement not null , title varchar(255), content varchar(255), mood varchar(255), " +
@@ -59,6 +62,7 @@ public class EntryDatabase extends android.database.sqlite.SQLiteOpenHelper{
         sqLiteDatabase.execSQL(drop);
         sqLiteDatabase.execSQL(prepared);
 
+        // insert a few example entries
         final String example =
                 "insert into Entries values (0, 'First day at work', 'The people were really nice" +
                         "next time Ill bring my own coffee', 'excited', '2018-04-29 17:01:59')";
@@ -72,17 +76,17 @@ public class EntryDatabase extends android.database.sqlite.SQLiteOpenHelper{
         sqLiteDatabase.execSQL(exampl2);
     }
 
+    // returns all entries, sorted by descending date
     public Cursor selectAll() {
         SQLiteDatabase wr = getWritableDatabase();
         Cursor c = wr.rawQuery("SELECT _id, title, content, mood, timestamp FROM Entries ORDER BY timestamp DESC",null);
-        Log.d("c", String.valueOf(c.getCount()));
         return c;
     }
 
+    // inserts a new entry into the database, requires a Journal object.
     public void insert(JournalEntry entry) {
         SQLiteDatabase wr = getWritableDatabase();
         ContentValues insertValues = new ContentValues();
-        //insertValues.put("_id", entry.getId());
         insertValues.put("mood", entry.getMood());
         insertValues.put("title", entry.getTitle());
         insertValues.put("content", entry.getContent()  );
@@ -90,6 +94,7 @@ public class EntryDatabase extends android.database.sqlite.SQLiteOpenHelper{
         wr.insert("Entries", null, insertValues);
     }
 
+    // delete a certain journal entry based on id, used with long press gesture in the main menu
     public void delete(int id){
         SQLiteDatabase wr = getWritableDatabase();
         wr.delete("Entries","_id == " + id, null);

@@ -5,7 +5,8 @@ import android.support.annotation.Nullable;
 import java.io.Serializable;
 
 /**
- *
+ * This class defines a JournalEntry, which is used by the rest of the app as a convenient way
+ * to pass information about entries around.
  */
 
 public class JournalEntry implements Serializable {
