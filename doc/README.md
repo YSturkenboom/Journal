@@ -1,7 +1,7 @@
 # Journal
 In the future, journals have emojis.
 
-![screenie](/doc/screen.png)
+![screenie](/doc/screen.PNG)
 
 In this revolutionary app, add entries to your personal journal! Organise your thoughts!
 Press the floating button at the bottom to get started writing an entry.
